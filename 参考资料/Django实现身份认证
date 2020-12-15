@@ -1,0 +1,42 @@
+一、基于用户登录的模式
+  1. 方法一：账号+Password登录
+  2. 方法二：用户身份（MAC地址）标识为一个unique_id，后端可以由此来判断用户身份。
+
+二、基于Django的实现
+
+这次的后端是Django，试了一下发现Django实现了一套自己的身份验证的API，用起来非常方便。
+
+用户创建与修改
+众所周知，Django中存储数据的原型称为Model，User就是Django中用户的Model，不需要程序员在models.py中自己定义。它有username、password、email、first_name、last_name五个属性。在Django中还有一个称为superuser的用户，它其实是User的一个特殊的子类，在本次微信抢票中，后台管理员就是superuser。
+
+普通User的创建是调用User中的create_user进行创建，而superuser的创建不是在代码中，而是输入python manage.py createsuperuser进行创建。
+
+#普通用户的创建
+from django.contrib.auth.models import User
+user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+user.last_name = 'Lennon'
+user.save()
+用户登陆登出
+在登陆时，使用authenticate的函数对用户进行验证，如果用户名、密码错误，该函数的返回值为None。此时嗲用login函数将request与该user绑定起来。login的结果是，以后每次的request，在request.user中总会存在用户的信息，这是下一步我们进行权限认证的前提。用户的退出就是调用logout(request)函数即可。
+
+用户权限
+
+request.user.is_authenticated（）
+一般的情况下（比如在本次微信抢票中），只需要有两种访问可能。一个是用户已登陆，可以访问，一个是用户未登陆，禁止访问。因此我们用这个函数就足够了。（我们确实是这么用的2333）
+
+当然还有一种更简单的用法——函数的装饰器，因为我们用的是类做相应，因此不适合微信抢票程序，但是还是mark一下，因为确实太方便了。就是在函数的前面加上login_required()装饰器，括号中可以填入如果未登陆应该重定向到哪个页面。
+
+但是在其它web应用中，我们需要不同的用户组有不同的权限，这个时候Django提供了另外一个叫做permission的属性。
+
+首先，每个用户都有一个group外键，可以给用户分配在某些group中，然后可以通过group.permissions来修改group的permission列表。
+
+在使用permission的时候，同样可以使用装饰器require_permission。
+
+除此之外，还有一个值得提的地方：装饰器user_passes_test(xxtest)，可以自己编写一个test函数来测试用户是否可以访问，test函数接收的参数为request.user
+
+from django.contrib.auth.decorators import user_passes_test
+def email_check(user):
+  return user.email.endswith('@example.com')
+@user_passes_test(email_check)
+def my_view(request):
+  ...
