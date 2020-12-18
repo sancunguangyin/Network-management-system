@@ -1,0 +1,131 @@
+一、基于端口的MAC地址绑定
+
+思科2950交换机为例，登录进入交换机，输入管理口令进入配置模式，敲入命令：
+
+Switch＃c onfig terminal
+
+进入配置模式
+
+Switch（config）# Interface fastethernet 0/1
+
+＃进入具体端口配置模式
+
+Switch（config-if）#Switchport port-secruity
+
+＃配置端口安全模式
+
+Switch（config-if ）switchport port-security mac-address MAC（主机的MAC地址）
+
+＃配置该端口要绑定的主机的MAC地址
+
+Switch（config-if ）no switchport port-security mac-address MAC（主机的MAC地址）
+
+＃删除绑定主机的MAC地址
+
+二、基于MAC地址的扩展访问列表
+
+Switch（config）Mac access-list extended MAC
+
+＃定义一个MAC地址访问控制列表并且命名该列表名为MAC
+
+Switch（config）permit host 0009.6bc4.d4bf any
+
+＃定义MAC地址为0009.6bc4.d4bf的主机可以访问任意主机
+
+Switch（config）permit any host 0009.6bc4.d4bf
+
+＃定义所有主机可以访问MAC地址为0009.6bc4.d4bf的主机
+
+Switch（config-if ）interface Fa0/20
+
+#进入配置具体端口的模式//本文转自www.jb51.net脚本之家
+
+Switch（config-if ）mac access-group MAC in
+
+＃在该端口上应用名为MAC的访问列表（即前面我们定义的访问策略）
+
+Switch（config）no mac access-list extended MAC
+
+＃清除名为MAC的访问列表
+
+三、IP地址的MAC地址绑定
+
+只能将应用1或2与基于IP的访问控制列表组合来使用才能达到IP-MAC 绑定功能。
+
+Switch（config）Mac access-list extended MAC
+
+＃定义一个MAC地址访问控制列表并且命名该列表名为MAC
+
+Switch（config）permit host 0009.6bc4.d4bf any
+
+＃定义MAC地址为0009.6bc4.d4bf的主机可以访问任意主机
+
+Switch（config）permit any host 0009.6bc4.d4bf
+
+＃定义所有主机可以访问MAC地址为0009.6bc4.d4bf的主机
+
+Switch（config）Ip access-list extended IP
+
+＃定义一个IP地址访问控制列表并且命名该列表名为IP
+
+Switch（config）Permit 192.168.0.1 0.0.0.0 any
+
+＃定义IP地址为192.168.0.1的主机可以访问任意主机
+
+Permit any 192.168.0.1 0.0.0.0
+
+＃定义所有主机可以访问IP地址为192.168.0.1的主机
+
+Switch（config-if ）interface Fa0/20
+
+#进入配置具体端口的模式
+
+Switch（config-if ）mac access-group MAC1in
+
+＃在该端口上应用名为MAC的访问列表（即前面我们定义的访问策略）
+
+Switch（config-if ）Ip access-group IP in
+
+＃在该端口上应用名为IP10的访问列表（即前面我们定义的访问策略）
+
+Switch（config）no mac access-list extended MAC
+
+＃清除名为MAC的访问列表
+
+Switch（config）no Ip access-group IP in
+
+＃清除名为IP的访问列表
+[NextPage]
+在cisco交换机中为了防止ip被盗用或员工乱改ip，可以做以下措施，即ip与mac地址的绑定和ip与交换机端口的绑定。
+
+一、通过IP查端口
+
+先查Mac地址，再根据Mac地址查端口：
+
+bangonglou3#show arp 　 include 208.41 或者show mac-address-table 来查看整个端口的ip-mac表
+
+Internet 10.138.208.41 4 0006.1bde.3de9 ARPA Vlan10
+
+bangonglou3#show mac-add 　 in 0006.1bde
+
+10 0006.1bde.3de9 DYNAMIC Fa0/17
+
+bangonglou3#exit
+
+二、ip与mac地址的绑定，这种绑定可以简单有效的防止ip被盗用，别人将ip改成了你绑定了mac地址的ip后，其网络不同，
+
+（tcp/udp协议不同，但netbios网络共项可以访问），具体做法：
+
+cisco（config）#arp 10.138.208.81 0000.e268.9980 ARPA
+
+这样就将10.138.208.81 与mac：0000.e268.9980 ARPA绑定在一起了
+
+三、ip与交换机端口的绑定，此种方法绑定后的端口只有此ip能用，改为别的ip后立即断网。有效的防止了乱改ip.
+
+cisco（config）# interface FastEthernet0/17
+
+cisco（config-if）# ip access-group 6 in
+
+cisco（config）#access-list 6 permit 10.138.208.81
+
+这样就将交换机的FastEthernet0/17端口与ip：10.138.208.81绑定了。
