@@ -1,0 +1,2 @@
+system-view
+undo am user-bind mac-address 0001-0001-0001 interface Ethernet 0/1
