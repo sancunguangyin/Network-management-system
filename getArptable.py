@@ -1,5 +1,7 @@
-from pysnmp.entity.rfc3413.oneliner import cmdgen
+#requirements：
+#pysnmp and pyasn1
 
+from pysnmp.entity.rfc3413.oneliner import cmdgen
 
 oTable = {
     "entLogicalCommunity": (1, 3, 6, 1, 2, 1, 47, 1, 2, 1, 1, 4),
