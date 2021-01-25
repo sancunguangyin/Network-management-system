@@ -37,8 +37,15 @@ def walk(dswitch, commVlan, oid  ):
         return errorIndication
     return generic
 
-def getarptab(host, community, oid):
-    entaddr = walk("10.20.0.250", "fsd3y@2020#@", oTable["HW"])
+def getarptab(host, community):
+    """
+    snmp扫描并获取核心交换机的arp表
+    input:
+        host:switch's ip
+        community:团体属性
+    output:arp_table
+    """
+    entaddr = walk(host, community, oTable["HW"])
     arp_table = []
     for i in entaddr:
         temp = ''
