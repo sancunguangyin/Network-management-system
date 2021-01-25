@@ -1,5 +1,6 @@
 from pysnmp.entity.rfc3413.oneliner import cmdgen
 
+
 oTable = {
     "entLogicalCommunity": (1, 3, 6, 1, 2, 1, 47, 1, 2, 1, 1, 4),
     "entPhysicalModelName": (1, 3, 6, 1, 2, 1, 47, 1, 1, 1, 1, 13, 1),
@@ -34,17 +35,14 @@ def walk(dswitch, commVlan, oid  ):
         return errorIndication
     return generic
 
-
-entaddr = walk("10.20.0.250", "fsd3y@2020#@", oTable["HW"])
-
-arp_table = []
-for i in entaddr:
-    temp = ''
-    for j in i:
-        temp += str(j)
-    temp = temp.replace("SNMPv2-SMI::mib-2.4.22.1.2.", "")
-    temp = temp[temp.find('.')+1:]
-    temp = temp.split(' = ')
-    arp_table.append(temp)
-
-arp_table
+def getarptab(host, community, oid):
+    entaddr = walk("10.20.0.250", "fsd3y@2020#@", oTable["HW"])
+    arp_table = []
+    for i in entaddr:
+        temp = ''
+        for j in i:
+            temp += str(j)
+        temp = temp.replace("SNMPv2-SMI::mib-2.4.22.1.2.", "")
+        temp = temp[temp.find('.')+1:]
+        temp = temp.split(' = ')
+        arp_table.append(temp)
