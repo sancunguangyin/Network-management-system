@@ -24,7 +24,7 @@ oTable = {
     "ipAdEntAddr": (1, 3, 6, 1, 2, 1, 4, 20, 1, 1),
     "ipAdEntIfIndex": (1, 3, 6, 1, 2, 1, 4, 20, 1, 2),
     "ARP": (1, 3, 6, 1, 2, 1, 3, 1, 1, 2),
-    "HW": (1, 3, 6, 1, 2, 1, 4, 22, 1, 2)
+    "ipNetToMediaTable": (1, 3, 6, 1, 2, 1, 4, 22, 1, 2)
 }
 
 
@@ -45,7 +45,7 @@ def getarptab(host, community):
         community:团体属性
     output:arp_table
     """
-    entaddr = walk(host, community, oTable["HW"])
+    entaddr = walk(host, community, oTable["ipNetToMediaTable"])
     arp_table = []
     for i in entaddr:
         temp = ''
