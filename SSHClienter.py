@@ -30,8 +30,8 @@ class SSHClienter():
     def execute_some_command(self,command):
         logging.info('开始执行交换机命令：'+command)
         # 执行命令
-        stdin, stdout, stderr = self.client.exec_command (execmd) 
-        return stdout.read()
+        stdin, stdout, stderr = self.client.exec_command(execmd) 
+        return stdout.read().decode()
 
     # 退出ssh连接
     def logout(self):
