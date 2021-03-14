@@ -27,10 +27,10 @@ class SSHClienter():
 
 
     # 此函数实现执行传过来的命令，并输出其执行结果
-    def execute_some_command(self,command):
+    def execute_command(self,command):
         logging.info('开始执行交换机命令：'+command)
         # 执行命令
-        stdin, stdout, stderr = self.client.exec_command(execmd) 
+        stdin, stdout, stderr = self.client.exec_command(command) 
         return stdout.read().decode()
 
     # 退出ssh连接
