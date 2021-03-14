@@ -16,6 +16,6 @@ def execSwitchCmds( host, username, password, commands):
     if ssh_client.login(host,username,password) :
         #msg += telnet_client.execute_some_command('system-view')
         for command in commands :
-            msg += ssh_client.execute_some_command(command)
+            msg += ssh_client.execute_command(command)
         ssh_client.logout()    
     return msg
